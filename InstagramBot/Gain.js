@@ -1,300 +1,321 @@
 const Instagram = require('instagram-web-api')
-const {
-    username,
-    password
-} = {
-<<<<<<< HEAD
-    username: 'sweatinterior',
-    password: 'ene$1334.*-'
-=======
-    username:'sweatinterior',
-    password:'ene$1334.*-.'
->>>>>>> 31f3bee871d55da7c0007f0af5d336a469834bf1
-}
+const userData = require('./CONFIG.json')
 
-const client = new Instagram({
-    username,
-    password
-})
-
-var captionList = [
-   '#homedecor','#interiordesign','#home','#interior','#decor','#design','#homedesign','#homesweethome','#handmade','#art','#decoration','#furniture','#interiors','#architecture','#homedecoration','#vintage','#interiordesigner','#love','#interiordecor','#homestyle','#livingroom','#interiorstyling','#diy','#dekorasirumah','#luxury','#inspiration','#walldecor','#shabbychic','#instahome',
-   '#decoration','#decor','#homedecor','#interiordesign','#design','#interior','#home','#art','#deco','#handmade','#architecture','#homedesign','#furniture','#inspiration','#homesweethome','#interiors','#love','#d','#wedding','#decorationinterieur','#vintage','#o','#designer','#luxury','#style','#flowers','#instagood','#homedecoration','#decoracion'
-];
-
-var userList = [
-    "thespruceofficial",
-    "d.signers",
-    "em_henderson",
-
-]
-
-client.login().then(() => {
-    var loggedDate = new Date();
-    console.log("Logged in! - " + loggedDate.toUTCString());
-
-
-    // hashtag gain
-    var hashtagInterval =  setInterval(() => {
-        var randomNumber = Math.floor(Math.random() * captionList.length);
-        var hashtag = captionList[randomNumber].replace('#','');
-
-        var willFollowIds = [];
-        var willLikeIds = [];
-        var willCommentIds = [];
-        var shortcodes = [];
-
-        console.log("Gain Started For'" + hashtag + "' - " + new Date().toUTCString());
-        // get media by hashtag
-        client.getMediaFeedByHashtag({
-            hashtag: hashtag
-        }).then(media => {
-
-            // fetch ids from media data
-            media.edge_hashtag_to_media.edges.forEach(item => {
-                willLikeIds.push(item.node.id);
-
-                if (item.node.edge_liked_by.count > 10 || item.node.edge_media_to_comment.count > 5) {
-                    willCommentIds.push(item.node.id);
-                }
-
-                if (item.node.edge_liked_by.count > 50) {
-                    shortcodes.push({
-                        shortcode: item.node.shortcode,
-                        type: 1
-                    });
-                }
-
-                if (item.node.edge_media_to_comment.count > 5) {
-                    shortcodes.push({
-                        shortcode: item.node.shortcode,
-                        type: 2
-                    });
-                }
-            });
-
-            shortcodes.forEach(sc => {
-                if (sc.type == 1) {
-                    //get likers
-                    client.getMediaLikes({
-                            shortcode: sc.shortcode,
-                            first:'20',
-                            after:''
-                        }).then(c => {
-                            c.edges.forEach(node => {
-                                willFollowIds.push(node.node.id)
-                            });
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                        });
-                } else {
-                    //get commenters
-                    client.getMediaComments({
-                            shortcode: sc.shortcode,
-                            first:'20'
-                        })
-                        .then((c) => {
-                            c.edges.forEach(node => {
-                                willFollowIds.push(node.node.owner.id);
-                            });
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                        });
-                }
-            });
-
-            // wait 10 seconds for loading data.
-            setTimeout(() => {
-                // like every 30 seconds.
-                var likeInterval = setInterval(() => {
-                    if (willLikeIds.length == 0) {
-                        console.log("all liked");
-                        clearInterval(likeInterval);
-                    }
-
-                    like(willLikeIds[0]);
-
-                    willLikeIds.shift();
-                }, 30000);
-
-                // comment every 30 seconds.
-                var commentInternal = setInterval(() => {
-                    if (willCommentIds.length == 0) {
-                        console.log("all commented");
-                        clearInterval(commentInternal);
-                    }
-
-                    comment(mediaId = willCommentIds[0], text ='awesome, follow us to get more inspiration photos about' + hashtag +' photos');
-                    willCommentIds.shift();
-                }, 30000);
-
-                // follow every 30 seconds.
-                var followInternal = setInterval(() => {
-                    if (willFollowIds.length == 0) {
-                        console.log("all followed");
-                        clearInterval(followInternal);
-                    }
-
-                    follow(willFollowIds[0]);
-
-                    willFollowIds.shift();
-                }, 30000);
-            }, 10000);
-
-        }).catch(c => {
-            console.log("err", c);
-            clearInterval(hashtagInterval);
-        });
-
-    }, 1000 * 60 * 60); // ever hour
-
-    //unfollow
-    var unfollowInterval = setInterval(() => {
-        client.getUserByUsername({
-            username:'sweatinterior'
-        }).then(res => {
-            var myId = res.id;
-
-            console.log("Unfollow Started For - " + new Date().toUTCString());
-
-
-            client.getFollowings({
-                userId: myId,
-                first: 1000
-            }).then(followingList => {
-
-                var unfollowInternal = setInterval(() => {
-                    if (followingList.count == 0) {
-                        console.log("all unfollowed");
-                        clearInterval(unfollowInternal);
-                    }
-
-                    unfollow(followingList.data[0].id);
-
-                    followingList.data.shift();
-                }, 1000 * 60);
-
-            });
-
-        }).catch(e => {
-            console.log("getUser err", e);
-            clearInterval(unfollowInterval);
-        });
-    }, 1000 * 60 * 60 * 24*7); // every day
-
-    var totalFollowedCount = 0;
-    // gain by user
-    setInterval(() => {
-        if (totalFollowedCount > 1200) {
-            console.log("you followed more than 1200 people to day");
-            totalFollowedCount = 0;
-            return 1;
-        }
-        var dSignerFollowIds = [];
-        var randomNumber = Math.floor(Math.random() * userList.length);
-        var userName =userList[randomNumber];
-        client.getUserByUsername({
-            username: userName
-        }).then(res => {
-            var lastShortCode = res.edge_owner_to_timeline_media.edges[0].node.shortcode;
-            var end_cursor;
-
-            var getMediaFollowrs = setInterval(() => {
-                if (dSignerFollowIds.length > 1200)
-                    clearInterval(getMediaFollowrs);
-
-                client.getMediaLikes({
-                    shortcode: lastShortCode,
-                    first: 50,
-                    after: end_cursor
-                }).then(c => {
-                    console.log("inside while - ", dSignerFollowIds.length);
-                    end_cursor = c.page_info.end_cursor;
-                    if(end_cursor == null || end_cursor == undefined)
-                        clearInterval(getMediaFollowrs);
-                    c.edges.forEach(node => {
-                        dSignerFollowIds.push(node.node.id);
-                    });
-                }).catch(er => {
-                    console.log("er when get media likes %j:", er);
-                });
-
-            }, 3000);
-
-
-            // wait 30 minutes for loading data.
-            setTimeout(() => {
-                console.log("follow count", dSignerFollowIds.length);
-                totalFollowedCount = dSignerFollowIds.length;
-                // follow every 60 seconds.
-                setInterval(() => {
-                    if (dSignerFollowIds.length == 0) {
-                        console.log("all followed");
-                        return 1;
-                    }
-
-                    follow(dSignerFollowIds[0]);
-
-                    dSignerFollowIds.shift();
-                }, 1000 * 60);
-            }, 3 * 60 * 1000);
-        }).catch(e => {
-            console.log("err" + e);
-        })
-    }, 1000 * 60 * 60 * 12); // twice every day.
+const readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
 });
 
-function like(mediaId, callback) {
+readline.question("Please enter username:\n", answer => {
+    readline.close();
 
-    client.like({
-        mediaId: mediaId
-    }).then(c => {
-        console.log("success like", c);
-    }).catch(e => {
-        console.log("error when like", e);
+    const {
+        username,
+        password
+    } = {
+        username: userData[answer].username,
+        password: userData[answer].password
+    };
+
+
+    const client = new Instagram({
+        username,
+        password
+    })
+
+    var captionList = userData[answer].captionList;
+
+    var userList = userData[answer].followUserList;
+
+    client.login().then(() => {
+        var loggedDate = new Date();
+        console.log("Logged in! - " + loggedDate.toUTCString());
+
+        // hashtag gain
+        var hashtagInterval = setInterval(() => {
+            var randomNumber = Math.floor(Math.random() * captionList.length);
+            var hashtag = captionList[randomNumber].replace('#', '');
+
+            var willFollowIds = [];
+            var willLikeIds = [];
+            var willCommentIds = [];
+            var shortcodes = [];
+
+            console.log("Gain Started For'" + hashtag + "' - " + new Date().toUTCString());
+            // get media by hashtag
+            client.getMediaFeedByHashtag({
+                hashtag: hashtag
+            }).then(media => {
+
+                // fetch ids from media data
+                media.edge_hashtag_to_media.edges.forEach(item => {
+                    willLikeIds.push(item.node.id);
+
+                    if (item.node.id % 3 === 0) {
+                        willCommentIds.push(item.node.id);
+                    }
+
+                    if (item.node.edge_liked_by.count > 30) {
+                        shortcodes.push({
+                            shortcode: item.node.shortcode,
+                            type: 1
+                        });
+                    }
+
+                    if (item.node.edge_media_to_comment.count > 5) {
+                        shortcodes.push({
+                            shortcode: item.node.shortcode,
+                            type: 2
+                        });
+                    }
+                });
+
+                shortcodes.forEach(sc => {
+                    if (sc.type == 1) {
+                        //get likers
+                        client.getMediaLikes({
+                                shortcode: sc.shortcode,
+                                first: 20
+                            }).then(c => {
+                                c.edges.forEach(node => {
+                                    willFollowIds.push(node.node.id)
+                                });
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    } else {
+                        //get commenters
+                        client.getMediaComments({
+                                shortcode: sc.shortcode,
+                                first: 50
+                            })
+                            .then((c) => {
+                                c.edges.forEach(node => {
+                                    willFollowIds.push(node.node.owner.id);
+                                });
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    }
+                });
+
+                setTimeout(() => {
+                    var likeInterval = setInterval(() => {
+                        if (willLikeIds.length == 0) {
+                            console.log("all liked");
+                            clearInterval(likeInterval);
+                            return;
+                        }
+
+                        like(willLikeIds[0]);
+                        willLikeIds.shift();
+                        console.log("left like count: ", willLikeIds.length);
+                    }, 30000);
+
+                    var commentInternal = setInterval(() => {
+                        if (willCommentIds.length == 0) {
+                            console.log("all commented");
+                            clearInterval(commentInternal);
+                            return;
+                        }
+
+                        comment(mediaId = willCommentIds[0], text = 'awesome, follow us to get more inspiration photos about #' + hashtag + ' photos');
+                        willCommentIds.shift();
+                        console.log("left comment count: ", willCommentIds.length);
+                    }, 30000);
+
+                    var followInternal = setInterval(() => {
+                        if (willFollowIds.length == 0) {
+                            console.log("all followed");
+                            clearInterval(followInternal);
+                            return;
+                        }
+
+                        follow(willFollowIds[0]);
+
+                        willFollowIds.shift();
+                        console.log("left follow count", willFollowIds.length);
+                    }, 30000);
+                }, 20 * 1000);
+
+            }).catch(c => {
+                console.log("err", c);
+                return;
+            });
+        }, 1000 * 60 * 60 * 3);
+
+        //unfollow
+        var unfollowInterval = setInterval(() => {
+            client.getUserByUsername({
+                username: 'sweatinterior'
+            }).then(res => {
+                var myId = res.id;
+
+                console.log("Unfollow Started For - " + new Date().toUTCString());
+                var unfollowIdList = [];
+
+                var end_cursor;
+
+                var getFollowings = setInterval(() => {
+                    client.getFollowings({
+                        userId: myId,
+                        first: 50,
+                        after: end_cursor
+                    }).then(c => {
+                        end_cursor = c.page_info.end_cursor;
+
+                        c.data.forEach(node => {
+                            unfollowIdList.push(node.id);
+                        });
+
+                        if (end_cursor == null || end_cursor == undefined) {
+                            clearInterval(getFollowings);
+                            return;
+                        }
+                    }).catch(er => {
+                        console.log("er when get media likes %j:", er);
+                    });
+                }, 3000);
+
+                // wait 30 minutes for loading data.
+                setTimeout(() => {
+                    totalFollowedCount = unfollowIdList.length;
+                    // unfollow every 60 seconds.
+                    var unfollowInterval = setInterval(() => {
+                        if (unfollowIdList.length == 0) {
+                            console.log("all unfollowed");
+                            clearInterval(unfollowInterval);
+                            return;
+                        }
+
+                        unfollow(unfollowIdList[0]);
+                        unfollowIdList.shift();
+                        console.log("left unfollow count: ", unfollowIdList.length);
+                    }, 1000 * 60);
+                }, 60 * 1000);
+            }).catch(e => {
+                console.log("getUser err", e);
+            });
+        }, 1000 * 60 * 60 * 48); // every day
+
+        var totalFollowedCount = 0;
+        // gain by user
+        var gainByUserInterval = setInterval(() => {
+            if (totalFollowedCount > 1200) {
+                console.log("you followed more than 1200 people to day");
+                totalFollowedCount = 0;
+                return 1;
+            }
+            var refUserFollowIds = [];
+            var randomNumber = Math.floor(Math.random() * userList.length);
+            var userName = userList[randomNumber];
+            console.log("ref user ", userName);
+            client.getUserByUsername({
+                username: userName
+            }).then(res => {
+                var lastShortCode = res.edge_owner_to_timeline_media.edges[0].node.shortcode;
+                var end_cursor;
+
+                var getMediaFollowrs = setInterval(() => {
+                    if (refUserFollowIds.length > 1200) {
+                        clearInterval(getMediaFollowrs);
+                        return;
+                    }
+
+                    console.log("resUserFollowIds length: ", refUserFollowIds.length);
+
+                    client.getMediaLikes({
+                        shortcode: lastShortCode,
+                        first: 50,
+                        after: end_cursor
+                    }).then(c => {
+                        c.edges.forEach(node => {
+                            refUserFollowIds.push(node.node.id);
+                        });
+
+                        end_cursor = c.page_info.end_cursor;
+                        if (end_cursor == null || end_cursor == undefined) {
+                            clearInterval(getMediaFollowrs);
+                            return;
+                        }
+                    }).catch(er => {
+                        console.log("er when get media likes %j:", er);
+                    });
+
+                }, 3000);
+
+                setTimeout(() => {
+                    console.log("follow count", refUserFollowIds.length);
+                    totalFollowedCount = refUserFollowIds.length;
+                    // follow every 60 seconds.
+                    setInterval(() => {
+                        if (refUserFollowIds.length == 0) {
+                            console.log("all followed");
+                            return 1;
+                        }
+
+                        follow(refUserFollowIds[0]);
+                        refUserFollowIds.shift();
+                        console.log("left refUserFollow : ", refUserFollowIds.length);
+                    }, 1000 * 60);
+                }, 60 * 1000);
+            }).catch(e => {
+                console.log("err" + e);
+            })
+        }, 1000 * 60 * 60 * 24); // twice every day.
     });
 
-    if (typeof callback == "function")
-        callback();
-}
+    function like(mediaId, callback) {
 
-function comment(mediaId, text, callback) {
-
-    client.addComment({
-            mediaId: mediaId,
-            text: text
-        })
-        .then(res => {
-            console.log("successfully commented");
-        }).catch(er => {
-            console.log("comment err", er);
+        client.like({
+            mediaId: mediaId
+        }).then(c => {
+            console.log("success like", c);
+        }).catch(e => {
+            console.log("error when like", e);
         });
 
-    if (typeof callback == "function")
-        callback();
-}
+        if (typeof callback == "function")
+            callback();
+    }
 
-function follow(userId) {
-    client.follow({
-        userId: userId
-    }).then(c => {
-        console.log("success follow");
-    }).catch(e => {
-        console.log("error when follow %j:", e);
-    });
-}
+    function comment(mediaId, text, callback) {
 
-function unfollow(userId, callback) {
+        client.addComment({
+                mediaId: mediaId,
+                text: text
+            })
+            .then(res => {
+                console.log("successfully commented");
+            }).catch(er => {
+                console.log("comment err", er);
+            });
 
-    client.unfollow({
-        userId: userId
-    }).then(c => {
-        console.log("success follow", c);
-    }).catch(e => {
-        console.log("error when follow", e);
-    });
-    if (typeof callback == "function")
-        callback();
-}
+        if (typeof callback == "function")
+            callback();
+    }
+
+    function follow(userId) {
+        client.follow({
+            userId: userId
+        }).then(c => {
+            console.log("success follow");
+        }).catch(e => {
+            console.log("error when follow %j:", e);
+        });
+    }
+
+    function unfollow(userId) {
+
+        client.unfollow({
+            userId: userId
+        }).then(c => {
+            console.log("success unfollow", c);
+        }).catch(e => {
+            console.log("error when unfollow", e);
+        });
+    }
+
+});

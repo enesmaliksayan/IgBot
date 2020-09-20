@@ -1,11 +1,20 @@
 const Instagram = require('instagram-web-api')
+var userData = require('./CONFIG.json');
+const readline = require('readline').createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+readline.question("Please enter username:\n", answer => {
+readline.close();
+
 const {
   username,
   password
 } = {
-  username: 'sweatinterior',
-  password: 'ene$1334.*-'
-}
+  username: userData[answer].username,
+  password: userData[answer].password
+};
 const fs = require('fs');
 const path = require('path');
 
@@ -13,10 +22,12 @@ const client = new Instagram({
   username,
   password
 })
-var feedDir = __dirname + '/feed/';
-var storyDir = __dirname + '/story/';
+var feedDir = __dirname +"/"+ username+'feed/';
+var storyDir = __dirname +"/"+ username+ 'story/';
 var photoList = [];
 var storyList = [];
+console.log(feedDir);
+
 
 fs.readdir(feedDir, (err, files) => {
   files.forEach(file => {
@@ -30,10 +41,7 @@ fs.readdir(storyDir, (err, files) => {
   });
 });
 
-var captionList = [
-  '  #homedecor ', '  #interiordesign ', '  #home ', '  #interior ', '  #decor ', '  #design ', '  #homedesign ', '  #homesweethome ', '  #handmade ', '  #art ', '  #decoration ', '  #furniture ', '  #interiors ', '  #architecture ', '  #homedecoration ', '  #vintage ', '  #interiordesigner ', '  #love ', '  #interiordecor ', '  #homestyle ', '  #livingroom ', '  #interiorstyling ', '  #diy ', '  #dekorasirumah ', '  #luxury ', '  #inspiration ', '  #walldecor ', '  #shabbychic ', '  #instahome ',
-  ' #decoration ', '  #decor ', '  #homedecor ', '  #interiordesign ', '  #design ', '  #interior ', '  #home ', '  #art ', '  #deco ', '  #handmade ', '  #architecture ', '  #homedesign ', '  #furniture ', '  #inspiration ', '  #homesweethome ', '  #interiors ', '  #love ', '  #d ', '  #wedding ', '  #decorationinterieur ', '  #vintage ', '  #o ', '  #designer ', '  #luxury ', '  #style ', '  #flowers ', '  #instagood ', '  #homedecoration ', '  #decoracion '
-];
+var captionList = userData[answer].captionList;
 
 setTimeout(() => {
 
@@ -44,13 +52,13 @@ setTimeout(() => {
       console.log("Logged in! - " + loggedDate.toUTCString());
 
       //Upload feed
-      setInterval(() => {
-        if(photoList.length==0)
-          {
-            console.log("all photos uploaded.");
-            return 1;
-          }
-          
+      var feedInterval = setInterval(() => {
+        if (photoList.length == 0) {
+          console.log("all photos uploaded.");
+          clearInterval(feedInterval);
+          return 1;
+        }
+
         var photo = photoList[0];
         var captionStr = "";
         for (var i = 0; i < 7; i++) {
@@ -79,14 +87,14 @@ setTimeout(() => {
           console.log("upload err", e);
         });
 
-      }, 1000 * 60 * 20); // 20 dakikada bir çalışacak.
+      }, 1000 * 60 * 60 * 3); // 3 saatte bir çalışacak.
 
 
       //Upload story
-      setInterval(() => {
-        if(storyList.length==0)
-        {
+      var storyInterval = setInterval(() => {
+        if (storyList.length == 0) {
           console.log("all stories uploaded.");
+          clearInterval(storyInterval);
           return 1;
         }
 
@@ -111,7 +119,10 @@ setTimeout(() => {
           console.log("story upload err", e);
         });
 
-      }, 1000 * 60 * 60); // 60 dakikada bir çalışacak.
+      }, 1000 * 60 * 60 * 4); // 4 saatte bir çalışacak.
 
     });
-}, (2000));
+}, 5000);
+});
+
+
