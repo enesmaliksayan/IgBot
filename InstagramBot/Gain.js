@@ -3,8 +3,13 @@ const {
     username,
     password
 } = {
+<<<<<<< HEAD
     username: 'sweatinterior',
     password: 'ene$1334.*-'
+=======
+    username:'sweatinterior',
+    password:'ene$1334.*-.'
+>>>>>>> 31f3bee871d55da7c0007f0af5d336a469834bf1
 }
 
 const client = new Instagram({
@@ -13,8 +18,8 @@ const client = new Instagram({
 })
 
 var captionList = [
-    '  #homedecor ', '  #interiordesign ', '  #home ', '  #interior ', '  #decor ', '  #design ', '  #homedesign ', '  #homesweethome ', '  #handmade ', '  #art ', '  #decoration ', '  #furniture ', '  #interiors ', '  #architecture ', '  #homedecoration ', '  #vintage ', '  #interiordesigner ', '  #love ', '  #interiordecor ', '  #homestyle ', '  #livingroom ', '  #interiorstyling ', '  #diy ', '  #dekorasirumah ', '  #luxury ', '  #inspiration ', '  #walldecor ', '  #shabbychic ', '  #instahome ',
-    ' #decoration ', '  #decor ', '  #homedecor ', '  #interiordesign ', '  #design ', '  #interior ', '  #home ', '  #art ', '  #deco ', '  #handmade ', '  #architecture ', '  #homedesign ', '  #furniture ', '  #inspiration ', '  #homesweethome ', '  #interiors ', '  #love ', '  #d ', '  #wedding ', '  #decorationinterieur ', '  #vintage ', '  #o ', '  #designer ', '  #luxury ', '  #style ', '  #flowers ', '  #instagood ', '  #homedecoration ', '  #decoracion '
+   '#homedecor','#interiordesign','#home','#interior','#decor','#design','#homedesign','#homesweethome','#handmade','#art','#decoration','#furniture','#interiors','#architecture','#homedecoration','#vintage','#interiordesigner','#love','#interiordecor','#homestyle','#livingroom','#interiorstyling','#diy','#dekorasirumah','#luxury','#inspiration','#walldecor','#shabbychic','#instahome',
+   '#decoration','#decor','#homedecor','#interiordesign','#design','#interior','#home','#art','#deco','#handmade','#architecture','#homedesign','#furniture','#inspiration','#homesweethome','#interiors','#love','#d','#wedding','#decorationinterieur','#vintage','#o','#designer','#luxury','#style','#flowers','#instagood','#homedecoration','#decoracion'
 ];
 
 var userList = [
@@ -32,14 +37,14 @@ client.login().then(() => {
     // hashtag gain
     var hashtagInterval =  setInterval(() => {
         var randomNumber = Math.floor(Math.random() * captionList.length);
-        var hashtag = captionList[randomNumber].replace('#', '').trim().trimEnd();
+        var hashtag = captionList[randomNumber].replace('#','');
 
         var willFollowIds = [];
         var willLikeIds = [];
         var willCommentIds = [];
         var shortcodes = [];
 
-        console.log("Gain Started For '" + hashtag + "' - " + new Date().toUTCString());
+        console.log("Gain Started For'" + hashtag + "' - " + new Date().toUTCString());
         // get media by hashtag
         client.getMediaFeedByHashtag({
             hashtag: hashtag
@@ -73,8 +78,8 @@ client.login().then(() => {
                     //get likers
                     client.getMediaLikes({
                             shortcode: sc.shortcode,
-                            first: '20',
-                            after: ''
+                            first:'20',
+                            after:''
                         }).then(c => {
                             c.edges.forEach(node => {
                                 willFollowIds.push(node.node.id)
@@ -87,7 +92,7 @@ client.login().then(() => {
                     //get commenters
                     client.getMediaComments({
                             shortcode: sc.shortcode,
-                            first: '20'
+                            first:'20'
                         })
                         .then((c) => {
                             c.edges.forEach(node => {
@@ -121,7 +126,7 @@ client.login().then(() => {
                         clearInterval(commentInternal);
                     }
 
-                    comment(mediaId = willCommentIds[0], text = 'awesome, follow us to get more inspiration photos about ' + hashtag + ' photos');
+                    comment(mediaId = willCommentIds[0], text ='awesome, follow us to get more inspiration photos about' + hashtag +' photos');
                     willCommentIds.shift();
                 }, 30000);
 
@@ -129,7 +134,7 @@ client.login().then(() => {
                 var followInternal = setInterval(() => {
                     if (willFollowIds.length == 0) {
                         console.log("all followed");
-                        clearInterval(followingList);
+                        clearInterval(followInternal);
                     }
 
                     follow(willFollowIds[0]);
@@ -148,7 +153,7 @@ client.login().then(() => {
     //unfollow
     var unfollowInterval = setInterval(() => {
         client.getUserByUsername({
-            username: 'sweatinterior'
+            username:'sweatinterior'
         }).then(res => {
             var myId = res.id;
 
@@ -177,7 +182,7 @@ client.login().then(() => {
             console.log("getUser err", e);
             clearInterval(unfollowInterval);
         });
-    }, 1000 * 60 * 60 * 24); // every day
+    }, 1000 * 60 * 60 * 24*7); // every day
 
     var totalFollowedCount = 0;
     // gain by user
@@ -189,7 +194,7 @@ client.login().then(() => {
         }
         var dSignerFollowIds = [];
         var randomNumber = Math.floor(Math.random() * userList.length);
-        var userName =userList[randomNumber].trim().trimEnd();
+        var userName =userList[randomNumber];
         client.getUserByUsername({
             username: userName
         }).then(res => {
@@ -238,7 +243,7 @@ client.login().then(() => {
         }).catch(e => {
             console.log("err" + e);
         })
-    }, 1000 * 60 * 60 * 1); // twice every day.
+    }, 1000 * 60 * 60 * 12); // twice every day.
 });
 
 function like(mediaId, callback) {

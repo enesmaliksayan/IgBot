@@ -1,0 +1,16 @@
+{
+  "name": "igbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Gain.js",
+  "dependencies": {
+    "async": "^3.2.0",
+    "sharp": "^0.26.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
