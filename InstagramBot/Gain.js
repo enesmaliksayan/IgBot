@@ -4,7 +4,7 @@ const {
     password
 } = {
     username: 'sweatinterior',
-    password: 'ene$1334.*-.'
+    password: 'ene$1334.*-'
 }
 
 const client = new Instagram({
