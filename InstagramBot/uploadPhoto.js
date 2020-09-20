@@ -52,7 +52,7 @@ setTimeout(() => {
       console.log("Logged in! - " + loggedDate.toUTCString());
 
       //Upload feed
-      var feedInterval = setInterval(() => {
+      // var feedInterval = setInterval(() => {
         if (photoList.length == 0) {
           console.log("all photos uploaded.");
           clearInterval(feedInterval);
@@ -87,7 +87,7 @@ setTimeout(() => {
           console.log("upload err", e);
         });
 
-      }, 1000 * 60 * 60 * 3); // 3 saatte bir çalışacak.
+      // }, 1000 * 60 * 60 * 3); // 3 saatte bir çalışacak.
 
 
       //Upload story

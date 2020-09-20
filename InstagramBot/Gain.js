@@ -112,7 +112,7 @@ readline.question("Please enter username:\n", answer => {
                         like(willLikeIds[0]);
                         willLikeIds.shift();
                         console.log("left like count: ", willLikeIds.length);
-                    }, 30000);
+                    }, 1000*60);
 
                     var commentInternal = setInterval(() => {
                         if (willCommentIds.length == 0) {
@@ -124,7 +124,7 @@ readline.question("Please enter username:\n", answer => {
                         comment(mediaId = willCommentIds[0], text = 'awesome, follow us to get more inspiration photos about #' + hashtag + ' photos');
                         willCommentIds.shift();
                         console.log("left comment count: ", willCommentIds.length);
-                    }, 30000);
+                    }, 1000*60*5);
 
                     var followInternal = setInterval(() => {
                         if (willFollowIds.length == 0) {
@@ -137,7 +137,7 @@ readline.question("Please enter username:\n", answer => {
 
                         willFollowIds.shift();
                         console.log("left follow count", willFollowIds.length);
-                    }, 30000);
+                    }, 1000*60*5);
                 }, 20 * 1000);
 
             }).catch(c => {
@@ -249,7 +249,7 @@ readline.question("Please enter username:\n", answer => {
                 setTimeout(() => {
                     console.log("follow count", refUserFollowIds.length);
                     totalFollowedCount = refUserFollowIds.length;
-                    // follow every 60 seconds.
+                    // follow every 120 seconds.
                     setInterval(() => {
                         if (refUserFollowIds.length == 0) {
                             console.log("all followed");
@@ -259,7 +259,7 @@ readline.question("Please enter username:\n", answer => {
                         follow(refUserFollowIds[0]);
                         refUserFollowIds.shift();
                         console.log("left refUserFollow : ", refUserFollowIds.length);
-                    }, 1000 * 60);
+                    }, 1000 * 60 * 2);
                 }, 60 * 1000);
             }).catch(e => {
                 console.log("err" + e);
