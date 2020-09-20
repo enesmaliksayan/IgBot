@@ -52,7 +52,7 @@ setTimeout(() => {
       console.log("Logged in! - " + loggedDate.toUTCString());
 
       //Upload feed
-      // var feedInterval = setInterval(() => {
+      var feedInterval = setInterval(() => {
         if (photoList.length == 0) {
           console.log("all photos uploaded.");
           clearInterval(feedInterval);
@@ -84,10 +84,10 @@ setTimeout(() => {
             }
           }).
         catch(e => {
-          console.log("upload err", e);
+          console.log("upload err", e.error.feedback_message);
         });
 
-      // }, 1000 * 60 * 60 * 3); // 3 saatte bir çalışacak.
+      }, 1000 * 60 * 60 * 3); // 3 saatte bir çalışacak.
 
 
       //Upload story
@@ -116,7 +116,7 @@ setTimeout(() => {
             }
           }).
         catch(e => {
-          console.log("story upload err", e);
+          console.log("story upload err", e.error.feedback_message:);
         });
 
       }, 1000 * 60 * 60 * 4); // 4 saatte bir çalışacak.

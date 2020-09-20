@@ -274,7 +274,7 @@ readline.question("Please enter username:\n", answer => {
         }).then(c => {
             console.log("success like", c);
         }).catch(e => {
-            console.log("error when like", e);
+            console.log("error when like", e.error.feedback_message);
         });
 
         if (typeof callback == "function")
@@ -290,7 +290,7 @@ readline.question("Please enter username:\n", answer => {
             .then(res => {
                 console.log("successfully commented");
             }).catch(er => {
-                console.log("comment err", er);
+                console.log("comment err", er.error.feedback_message);
             });
 
         if (typeof callback == "function")
@@ -303,7 +303,7 @@ readline.question("Please enter username:\n", answer => {
         }).then(c => {
             console.log("success follow");
         }).catch(e => {
-            console.log("error when follow %j:", e);
+            console.log("error when follow:", e.error.feedback_message);
         });
     }
 
@@ -314,7 +314,7 @@ readline.question("Please enter username:\n", answer => {
         }).then(c => {
             console.log("success unfollow", c);
         }).catch(e => {
-            console.log("error when unfollow", e);
+            console.log("error when unfollow", e.error.feedback_message);
         });
     }
 
