@@ -116,7 +116,7 @@ setTimeout(() => {
             }
           }).
         catch(e => {
-          console.log("story upload err", e.error.feedback_message:);
+          console.log("story upload err", e.error.feedback_message);
         });
 
       }, 1000 * 60 * 60 * 4); // 4 saatte bir çalışacak.
