@@ -4,6 +4,14 @@ var async = require('async'),
 
 const sharp = require('sharp');
 
+const readline = require('readline').createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+readline.question("Please enter username:\n", answer => {
+readline.close();
+
 function resize() {
   var queue = async.queue(resizeimg, 5000);
 
@@ -19,8 +27,8 @@ function resize() {
 function resizeimg(file, cb) {
 
   var dirSource = __dirname + '/downloaded';
-  var dirDestFeed = __dirname + '/feed';
-  var dirDestStory = __dirname + '/story';
+  var dirDestFeed = __dirname +'/'+answer+ 'feed';
+  var dirDestStory = __dirname +'/'+answer+ 'story';
 
   var sharpFile = sharp(dirSource + '/' + file);
 
@@ -57,3 +65,5 @@ function resizeimg(file, cb) {
 }
 
 resize();
+
+});
