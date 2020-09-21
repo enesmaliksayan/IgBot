@@ -49,9 +49,12 @@ readline.question("Please enter username:\n", answer => {
 
                 // fetch ids from media data
                 media.edge_hashtag_to_media.edges.forEach(item => {
-                    willLikeIds.push(item.node.id);
 
                     if (item.node.id % 3 === 0) {
+                        willLikeIds.push(item.node.id);
+                    }
+
+                    if (item.node.id % 7 === 0) {
                         willCommentIds.push(item.node.id);
                     }
 
@@ -62,7 +65,7 @@ readline.question("Please enter username:\n", answer => {
                         });
                     }
 
-                    if (item.node.edge_media_to_comment.count > 5) {
+                    if (item.node.edge_media_to_comment.count > 15) {
                         shortcodes.push({
                             shortcode: item.node.shortcode,
                             type: 2
@@ -75,7 +78,7 @@ readline.question("Please enter username:\n", answer => {
                         //get likers
                         client.getMediaLikes({
                                 shortcode: sc.shortcode,
-                                first: 20
+                                first: 30
                             }).then(c => {
                                 c.edges.forEach(node => {
                                     willFollowIds.push(node.node.id)
@@ -88,7 +91,7 @@ readline.question("Please enter username:\n", answer => {
                         //get commenters
                         client.getMediaComments({
                                 shortcode: sc.shortcode,
-                                first: 50
+                                first: 30
                             })
                             .then((c) => {
                                 c.edges.forEach(node => {
@@ -112,7 +115,7 @@ readline.question("Please enter username:\n", answer => {
                         like(willLikeIds[0]);
                         willLikeIds.shift();
                         console.log("left like count: ", willLikeIds.length);
-                    }, 1000*60);
+                    }, 1000 * 60 * 2);
 
                     var commentInternal = setInterval(() => {
                         if (willCommentIds.length == 0) {
@@ -124,7 +127,7 @@ readline.question("Please enter username:\n", answer => {
                         comment(mediaId = willCommentIds[0], text = 'awesome, follow us to get more inspiration photos about #' + hashtag + ' photos');
                         willCommentIds.shift();
                         console.log("left comment count: ", willCommentIds.length);
-                    }, 1000*60*5);
+                    }, 1000 * 60 * 5);
 
                     var followInternal = setInterval(() => {
                         if (willFollowIds.length == 0) {
@@ -137,7 +140,7 @@ readline.question("Please enter username:\n", answer => {
 
                         willFollowIds.shift();
                         console.log("left follow count", willFollowIds.length);
-                    }, 1000*60*5);
+                    }, 1000 * 60 * 5);
                 }, 20 * 1000);
 
             }).catch(c => {
@@ -203,8 +206,8 @@ readline.question("Please enter username:\n", answer => {
         var totalFollowedCount = 0;
         // gain by user
         var gainByUserInterval = setInterval(() => {
-            if (totalFollowedCount > 1200) {
-                console.log("you followed more than 1200 people to day");
+            if (totalFollowedCount > 300) {
+                console.log("you followed more than 300 people to day");
                 totalFollowedCount = 0;
                 return 1;
             }
@@ -219,7 +222,7 @@ readline.question("Please enter username:\n", answer => {
                 var end_cursor;
 
                 var getMediaFollowrs = setInterval(() => {
-                    if (refUserFollowIds.length > 1200) {
+                    if (refUserFollowIds.length > 300) {
                         clearInterval(getMediaFollowrs);
                         return;
                     }
@@ -259,12 +262,12 @@ readline.question("Please enter username:\n", answer => {
                         follow(refUserFollowIds[0]);
                         refUserFollowIds.shift();
                         console.log("left refUserFollow : ", refUserFollowIds.length);
-                    }, 1000 * 60 * 2);
+                    }, 1000 * 60 * 5);
                 }, 60 * 1000);
             }).catch(e => {
                 console.log("err" + e);
             })
-        }, 1000 * 60 * 60 * 24); // twice every day.
+        }, 1000 * 60 * 60 * 24);
     });
 
     function like(mediaId, callback) {
