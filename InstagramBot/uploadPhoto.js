@@ -84,7 +84,7 @@ setTimeout(() => {
             }
           }).
         catch(e => {
-          console.log("upload err", e.error.feedback_message);
+          console.log("upload err  :%j", e.error);
         });
 
       }, 1000 * 60 * 60 * 3); // 3 saatte bir çalışacak.
