@@ -150,7 +150,7 @@ readline.question("Please enter username:\n", answer => {
         }, 1000 * 60 * 60 * 3);
 
         //unfollow
-        var unfollowInterval = setInterval(() => {
+        // var unfollowInterval = setInterval(() => {
             client.getUserByUsername({
                 username: 'sweatinterior'
             }).then(res => {
@@ -201,7 +201,7 @@ readline.question("Please enter username:\n", answer => {
             }).catch(e => {
                 console.log("getUser err", e);
             });
-        }, 1000 * 60 * 60 * 48); // every day
+        // }, 1000 * 60 * 60 * 48); // every day
 
         var totalFollowedCount = 0;
         // gain by user
